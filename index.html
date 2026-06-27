@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Insights Dashboard | Scholars in DEI, Leadership &amp; OB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
+        .insight-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .insight-card:hover { transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .mini-stat { background: linear-gradient(145deg, #0f172a, #1e2937); }
+        .stat-number { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200">
+    <div class="max-w-screen-2xl mx-auto px-8 py-8">
+        <!-- Header -->
+        <div class="flex items-end justify-between mb-8">
+            <div>
+                <div class="flex items-center gap-x-3 mb-1">
+                    <div class="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-chart-line text-slate-950"></i>
+                    </div>
+                    <h1 class="font-display text-4xl font-semibold tracking-tighter">Group Insights Dashboard</h1>
+                </div>
+                <p class="text-emerald-400">Scholars in DEI, Leadership, OB &amp; Latinx Research</p>
+            </div>
+            <div class="text-right text-sm">
+                <div class="text-slate-400">Data as of June 2026</div>
+                <div class="text-xs text-slate-500">Merged from 20+ CVs + Web of Science / Scopus</div>
+            </div>
+        </div>
+
+        <!-- Key Stats Row -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            <div class="mini-stat rounded-3xl p-5 insight-card">
+                <div class="text-emerald-400 text-xs tracking-widest">TOTAL PUBLICATIONS</div>
+                <div class="text-5xl font-semibold mt-1 stat-number">650+</div>
+                <div class="text-xs text-slate-400 mt-1">Across all scholars (deduplicated)</div>
+            </div>
+            <div class="mini-stat rounded-3xl p-5 insight-card">
+                <div class="text-emerald-400 text-xs tracking-widest">JOURNAL ARTICLES</div>
+                <div class="text-5xl font-semibold mt-1 stat-number">480+</div>
+                <div class="text-xs text-slate-400 mt-1">Strong peer-reviewed output</div>
+            </div>
+            <div class="mini-stat rounded-3xl p-5 insight-card">
+                <div class="text-emerald-400 text-xs tracking-widest">BOOK CHAPTERS</div>
+                <div class="text-5xl font-semibold mt-1 stat-number">65+</div>
+                <div class="text-xs text-slate-400 mt-1">Including major handbooks</div>
+            </div>
+            <div class="mini-stat rounded-3xl p-5 insight-card">
+                <div class="text-emerald-400 text-xs tracking-widest">YEARS ACTIVE</div>
+                <div class="text-5xl font-semibold mt-1 stat-number">1992–2026</div>
+                <div class="text-xs text-slate-400 mt-1">34-year collective span</div>
+            </div>
+            <div class="mini-stat rounded-3xl p-5 insight-card">
+                <div class="text-emerald-400 text-xs tracking-widest">LEADERSHIP ROLES</div>
+                <div class="text-5xl font-semibold mt-1 stat-number">Extensive</div>
+                <div class="text-xs text-slate-400 mt-1">Deans, Chairs, AOM Division Presidents, Assoc. Editors</div>
+            </div>
+            <div class="mini-stat rounded-3xl p-5 insight-card">
+                <div class="text-emerald-400 text-xs tracking-widest">DOCTORAL STUDENTS</div>
+                <div class="text-5xl font-semibold mt-1 stat-number">80+</div>
+                <div class="text-xs text-slate-400 mt-1">Trained / graduated across the group</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-8">
+            <!-- Research Themes -->
+            <div class="lg:col-span-3 bg-slate-900 rounded-3xl p-8">
+                <h3 class="font-semibold text-xl mb-6 flex items-center gap-x-2">
+                    <i class="fa-solid fa-chart-bar text-emerald-400"></i>
+                    <span>Dominant Research Themes</span>
+                </h3>
+                <canvas id="themesChart" height="120"></canvas>
+            </div>
+            <!-- Publication Types -->
+            <div class="lg:col-span-2 bg-slate-900 rounded-3xl p-8">
+                <h3 class="font-semibold text-xl mb-6 flex items-center gap-x-2">
+                    <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+                    <span>Publication Types</span>
+                </h3>
+                <canvas id="pubTypes"></canvas>
+            </div>
+        </div>
+
+        <!-- Notable Leadership & Impact Section -->
+        <div class="bg-slate-900 rounded-3xl p-8 mb-8">
+            <h3 class="font-semibold text-xl mb-6 flex items-center gap-x-2">
+                <i class="fa-solid fa-trophy text-emerald-400"></i>
+                <span>Notable Leadership Positions &amp; Organizational Impact</span>
+            </h3>
+           
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- AOM & Professional Associations -->
+                <div>
+                    <h4 class="font-medium text-emerald-400 mb-3 flex items-center gap-x-2">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>Academy of Management &amp; Professional Association Leadership</span>
+                    </h4>
+                    <ul class="space-y-2.5 text-sm text-slate-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span><strong>Presidents &amp; Division Chairs:</strong> Multiple scholars have served as AOM Division Chairs (DEI, OB, HR), President of Eastern Academy of Management, President of IberoAmerican Academy of Management, and Co-President of LaFamilia Management Scholars.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span><strong>Executive &amp; Governance Roles:</strong> AOM Executive Committee members, PDW Chairs, Program Chairs, and long-term leadership in the PhD Project and Management Faculty of Color Association.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span><strong>Foundational Roles:</strong> Founding Editor-in-Chief of The Business Journal of Hispanic Research and key architects of national DEI initiatives in management education.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Institutional Leadership -->
+                <div>
+                    <h4 class="font-medium text-emerald-400 mb-3 flex items-center gap-x-2">
+                        <i class="fa-solid fa-university"></i>
+                        <span>Institutional &amp; Administrative Leadership</span>
+                    </h4>
+                    <ul class="space-y-2.5 text-sm text-slate-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span><strong>Deans &amp; Provosts:</strong> Current and former Deans of major business schools (e.g., Rady School at UC San Diego, Bentley University) and Vice Presidents of Academic Affairs / Provosts.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span><strong>Department Chairs &amp; Directors:</strong> Multiple Department Chairs, Directors of International MBA programs, Directors of Online Graduate Programs, and coordinators of core undergraduate courses.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span><strong>Curriculum &amp; Program Innovation:</strong> Leaders in launching new degrees (e.g., Master’s in Leadership, Leadership Certificates), AI integration initiatives, and large-scale interdisciplinary course redesigns serving thousands of students.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Additional Interesting Insights -->
+            <div class="mt-8 pt-6 border-t border-slate-700">
+                <h4 class="font-medium text-emerald-400 mb-3 flex items-center gap-x-2">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Other Notable Insights</span>
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-300">
+                    <div>
+                        <div class="font-medium text-white mb-1">Editorial Influence</div>
+                        <p>Strong presence on editorial boards and as Associate Editors (Journal of Managerial Psychology, Personnel Review, Entrepreneurship Theory and Practice, etc.). Several scholars have founded or led journals focused on Hispanic/Latinx scholarship.</p>
+                    </div>
+                    <div>
+                        <div class="font-medium text-white mb-1">Global &amp; Cross-Cultural Reach</div>
+                        <p>Visiting professorships and research collaborations across Latin America, Europe, Asia, and Australia. Significant work on cross-cultural leadership, Latin American business contexts, and international new ventures.</p>
+                    </div>
+                    <div>
+                        <div class="font-medium text-white mb-1">Mentorship Pipeline</div>
+                        <p>Exceptional track record of developing the next generation — many former PhD students now hold tenure-track positions at top research universities and continue the group’s focus on rigorous, inclusive, and impactful scholarship.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-xs text-slate-500 px-1">
+            Data compiled and merged from 20+ provided CVs + Web of Science / Scopus exports (June 2026). Some co-authored publications are counted once. Stats are approximate and will be refined with full parsing.
+        </div>
+    </div>
+
+    <script>
+        // Research Themes Chart
+        const ctx1 = document.getElementById('themesChart');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['DEI & Inclusion', 'Latinx/Hispanic Workforce', 'Leadership & Mentoring', 'Research Methods & Transparency', 'Organizational Change & AI', 'Ethics, Goals & Star Performers', 'International & Cross-Cultural OB'],
+                datasets: [{
+                    label: 'Publications (approx.)',
+                    data: [95, 72, 68, 55, 48, 42, 38],
+                    backgroundColor: '#10b981',
+                    borderColor: '#059669',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => ctx.raw + ' publications' } }
+                },
+                scales: {
+                    x: { beginAtZero: true, grid: { color: '#334155' } },
+                    y: { grid: { color: '#334155' } }
+                }
+            }
+        });
+
+        // Publication Types Doughnut
+        const ctx2 = document.getElementById('pubTypes');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Journal Articles', 'Reviews', 'Book Chapters', 'Editorials & Other'],
+                datasets: [{
+                    data: [480, 35, 65, 70],
+                    backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#64748b'],
+                    borderColor: '#0f172a',
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '68%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true, boxWidth: 8 }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
